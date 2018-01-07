@@ -1,0 +1,13 @@
+#binary-search-tree-container {
+  width: 100%;
+  height: 100vh;
+}
+
+#node-value-submit {
+  margin: 0 0 3px 12px;
+}
+
+/* hide all (empty) leaf nodes */
+.leafNodeBase {
+  display: none;
+}
