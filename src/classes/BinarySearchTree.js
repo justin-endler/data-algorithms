@@ -2,21 +2,32 @@ import BinaryTreeNode from './BinaryTreeNode';
 
 export default class BinarySearchTree {
   constructor(root = null) {
+    if (root) {
+      root = root.clone();
+    }
+
     this.root = root;
   }
 
-  clone() {
-    return new BinarySearchTree(this.root);
+  // typical BST api
+  insert(data) {
+    data = data && parseFloat(data);
+    if (isNaN(data)) {
+      return;
+    }
+    if (!this.root) {
+      this.root = new BinaryTreeNode(data);
+    } else {
+      return this._searchAndLinkToNode(data, this.root);
+    }
   }
 
-  compare(binarySearchTree) {
-    if (!(binarySearchTree && binarySearchTree.getLevelOrderTraversal)) {
-      return false;
+  remove(data) {
+    data = data && parseFloat(data);
+    if (isNaN(data)) {
+      return;
     }
-    if (this.getLevelOrderTraversal().toString() === binarySearchTree.getLevelOrderTraversal().toString()) {
-      return true;
-    }
-    return false;
+    this.root = this._removeNode(this.root, data);
   }
 
   getLevelOrderTraversal(tree = this) {
@@ -39,17 +50,21 @@ export default class BinarySearchTree {
       }
     }
     return result;
-  };
+  }
 
-  insert(data) {
-    data = data && parseFloat(data);
-    if (isNaN(data)) {
-      return;
-    }
-    if (this.root === null) {
-      this.root = new BinaryTreeNode(data);
+  _searchAndLinkToNode(data, node) {
+    if (data < node.data) {
+      if (node.left) {
+        return this._searchAndLinkToNode(data, node.left);
+      }
+      node.setLeft(new BinaryTreeNode(data));
+    } else if (data > node.data) {
+      if (node.right) {
+        return this._searchAndLinkToNode(data, node.right);
+      }
+      node.setRight(new BinaryTreeNode(data));
     } else {
-      this._searchAndLinkToNode(data, this.root);
+      return false;
     }
   }
 
@@ -87,26 +102,29 @@ export default class BinarySearchTree {
     return node;
   }
 
-  remove(data) {
-    data = data && parseFloat(data);
-    if (isNaN(data)) {
-      return;
-    }
-    this.root = this._removeNode(this.root, data);
+  // helpers for use with React/Redux
+  clone() {
+    return new BinarySearchTree(this.root);
   }
 
-  _searchAndLinkToNode(data, node) {
-    if (data < node.data) {
-      if (node.left) {
-        return this._searchAndLinkToNode(data, node.left);
-      }
-      node.setLeft(new BinaryTreeNode(data));
-    } else if (data > node.data) {
-      if (node.right) {
-        return this._searchAndLinkToNode(data, node.right);
-      }
-      node.setRight(new BinaryTreeNode(data));
+  compare(binarySearchTree) {
+    if (!(binarySearchTree && binarySearchTree.getLevelOrderTraversal)) {
+      return false;
     }
+    if (this.getLevelOrderTraversal().toString() === binarySearchTree.getLevelOrderTraversal().toString()) {
+      return true;
+    }
+    return false;
+  }
+
+  // helpers for use with D3
+  getD3Representation() {
+    var result = [];
+    if (!this.root) {
+      return result;
+    }
+    result.push(this._collectInPreOrder(this.root));
+    return result;
   }
 
   _collectInPreOrder(node) {
@@ -130,14 +148,5 @@ export default class BinarySearchTree {
       name: `${node.data}`,
       children
     };
-  }
-
-  getArrayRepresentation() {
-    var result = [];
-    if (!this.root) {
-      return result;
-    }
-    result.push(this._collectInPreOrder(this.root));
-    return result;
   }
 }

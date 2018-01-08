@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import BinarySearcTree from './BinarySearchTreeComponent';
+import { connect } from 'react-redux';
+import { insertBinarySearchTreeNode } from '../actions';
+import { inflate } from 'zlib';
 
-export default class BinaryTreeNodeInsert extends Component {
+class BinaryTreeNodeInsert extends Component {
   constructor(props) {
     super(props);
 
@@ -21,7 +23,10 @@ export default class BinaryTreeNodeInsert extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.props.onInsert(this.state.value);
+
+    const { tree } = this.props;
+
+    this.props.insertBinarySearchTreeNode(this.state.value, tree);
     this.setState({
       value: ''
     });
@@ -33,7 +38,7 @@ export default class BinaryTreeNodeInsert extends Component {
         <div className="form-group">
           <label htmlFor="node-value-insert">
             Insert Node
-            <input id="node-value-insert" type="text" className="form-control" value={this.state.value} onChange={this.handleChange} placeholder="Node value" />
+            <input id="node-value-insert" type="text" className="form-control" value={this.state.value} onChange={this.handleChange} placeholder="Number" />
           </label>
           <input id="node-value-submit" type="submit" className="btn btn-primary" value="Insert" />
         </div>
@@ -41,3 +46,5 @@ export default class BinaryTreeNodeInsert extends Component {
     );
   }
 }
+
+export default connect(null, { insertBinarySearchTreeNode })(BinaryTreeNodeInsert);

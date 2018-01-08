@@ -1,74 +1,38 @@
 import React, { Component } from 'react';
-import BinarySearchTree from '../classes/BinarySearchTree';
-import BinaryTreeNodeInsert from './BinaryTreeNodeInsert';
+import { connect } from 'react-redux';
 import Tree from 'react-d3-tree';
 import { svg } from 'd3';
+import BinarySearchTree from '../classes/BinarySearchTree';
+import BinaryTreeNodeInsert from './BinaryTreeNodeInsert';
+import {
+  initBinarySearchTree,
+  removeBinarySearchTreeNode,
+  replaceBinarySearchTree
+} from '../actions';
 
-export default class BinarySearchTreeComponent extends Component {
+class BinarySearchTreeComponent extends Component {
   constructor(props) {
     super(props);
+    this.props.initBinarySearchTree();
 
-    const tree = new BinarySearchTree();
-
-    this.state = {
-      tree,
-      arrayRepresentation: tree.getArrayRepresentation(),
-      translate: undefined
-    };
-
-    this.handleInsert = this.handleInsert.bind(this);
     this.pathFunc = this.pathFunc.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
   }
 
-  handleInsert(data) {
-    var tree = this.state.tree.clone();
-    tree.insert(data);
-    this._setState(tree);
-  }
-
   handleRemove(data) {
     data = data && data.name;
-    var tree = this.state.tree.clone();
-    tree.remove(data);
-    console.info("tree", tree); // @test
-    this._setState(tree);
+    const { tree } = this.props;
+
+    this.props.removeBinarySearchTreeNode(data, tree);
   }
 
-  _setState(tree) {
-    var translate;
-    if (this.treeContainer) {
-      let dimensions = this.treeContainer.getBoundingClientRect();
-      translate = {
-        x: dimensions.width / 2,
-        y: dimensions.height / 4
-      };
-    }
-
-    this.setState({
-      // update the real linked tree structure
-      tree,
-      // update the array representation
-      arrayRepresentation: tree.getArrayRepresentation(),
-      // center the tree
-      translate
-    });
-  }
-
-  componentDidUpdate(previousProps, previousState) {
-    if (this.state.tree.compare(previousState.tree)) {
+  componentDidUpdate(previousProps) {
+    if (this.props.tree.compare(previousProps.tree)) {
       return;
     }
-
-    this._setState(this.state.tree.clone());
-  }
-
-  // custom port of react-d3-tree's diagonalPath
-  _diagonalPath(linkData) {
-    const diagonal = svg
-      .diagonal()
-      .projection(d => ([d.x, d.y]));
-    return diagonal(linkData);
+    // Update the tree if it is different than the last version.
+    // This allows the translate function to recalculate for centering the tree.
+    this.props.replaceBinarySearchTree(this.props.tree, this.treeContainer);
   }
 
   pathFunc(linkData, orientation) {
@@ -79,16 +43,24 @@ export default class BinarySearchTreeComponent extends Component {
     return this._diagonalPath(linkData);
   }
 
+  // custom port of react-d3-tree's diagonalPath
+  _diagonalPath(linkData) {
+    const diagonal = svg
+      .diagonal()
+      .projection(d => ([d.x, d.y]));
+    return diagonal(linkData);
+  }
+
   render() {
-    if (this.state.arrayRepresentation.length) {
+    if (this.props.d3Representation.length) {
       return (
         <div>
-          <BinaryTreeNodeInsert onInsert={this.handleInsert} />
+          <BinaryTreeNodeInsert tree={this.props.tree} />
           <div>Click on a node to remove it.</div>
           <div id="binary-search-tree-container" ref={tc => {this.treeContainer = tc;}}>
             <Tree
-              data={this.state.arrayRepresentation}
-              translate={this.state.translate}
+              data={this.props.d3Representation}
+              translate={this.props.translate}
               orientation={'vertical'}
               pathFunc={this.pathFunc}
               collapsible={false}
@@ -100,8 +72,23 @@ export default class BinarySearchTreeComponent extends Component {
     }
     return (
       <div>
-        <BinaryTreeNodeInsert onInsert={this.handleInsert} />
+        <BinaryTreeNodeInsert tree={this.props.tree} />
       </div>
     );
   }
 }
+
+function mapStateToProps({ treeReducer }) {
+  const { tree, d3Representation, translate } = treeReducer;
+  return {
+    tree,
+    d3Representation,
+    translate
+  };
+}
+
+export default connect(mapStateToProps, {
+  initBinarySearchTree,
+  removeBinarySearchTreeNode,
+  replaceBinarySearchTree
+})(BinarySearchTreeComponent);

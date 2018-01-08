@@ -22,9 +22,10 @@
     "d3": "3.5.17",
     "react": "15.6.2",
     "react-d3-tree": "^1.7.0",
-    "react-dom": "^15.0.0",
+    "react-dom": "15.6.2",
     "react-redux": "4.3.0",
     "react-router": "^2.0.1",
+    "react-router-dom": "^4.2.2",
     "redux": "^3.0.4"
   }
 }

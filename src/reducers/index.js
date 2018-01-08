@@ -1,7 +1,9 @@
 import { combineReducers } from 'redux';
+import TreeReducer from './TreeReducer';
+
 
 const rootReducer = combineReducers({
-  state: (state = {}) => state
+  treeReducer: TreeReducer
 });
 
 export default rootReducer;

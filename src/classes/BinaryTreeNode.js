@@ -13,4 +13,16 @@ export default class BinaryTreeNode {
   setRight(node) {
     this.right = node;
   }
+
+  clone() {
+    var newNode = new BinaryTreeNode(this.data);
+    if (this.left) {
+      newNode.left = this.left.clone();
+    }
+    if (this.right) {
+      newNode.right = this.right.clone();
+    }
+
+    return newNode;
+  }
 }
