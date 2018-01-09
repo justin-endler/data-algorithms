@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 
 const Nav = () => {
   return (
-    <div id="navigation">
-      <Link to="/binary-search-tree">Binary Search Tree</Link>
-    </div>
+    <nav id="navigation" className="nav justify-content-center">
+      <Link to="/" className="nav-link">Home</Link>
+      <Link to="/binary-search-tree" className="nav-link">Binary Search Tree</Link>
+    </nav>
   );
 };
 

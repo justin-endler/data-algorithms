@@ -13,7 +13,10 @@ import {
 class BinarySearchTreeComponent extends Component {
   constructor(props) {
     super(props);
-    this.props.initBinarySearchTree();
+
+    if (!props.tree) {
+      this.props.initBinarySearchTree();
+    }
 
     this.pathFunc = this.pathFunc.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
@@ -55,8 +58,10 @@ class BinarySearchTreeComponent extends Component {
     if (this.props.d3Representation.length) {
       return (
         <div>
-          <BinaryTreeNodeInsert tree={this.props.tree} />
-          <div>Click on a node to remove it.</div>
+          <div className="container">
+            <BinaryTreeNodeInsert tree={this.props.tree} />
+            <div>Click on a node to remove it.</div>
+          </div>
           <div id="binary-search-tree-container" ref={tc => {this.treeContainer = tc;}}>
             <Tree
               data={this.props.d3Representation}
@@ -71,15 +76,15 @@ class BinarySearchTreeComponent extends Component {
       );
     }
     return (
-      <div>
+      <div className="container">
         <BinaryTreeNodeInsert tree={this.props.tree} />
       </div>
     );
   }
 }
 
-function mapStateToProps({ treeReducer }) {
-  const { tree, d3Representation, translate } = treeReducer;
+function mapStateToProps(reducers) {
+  const { tree, d3Representation, translate } = reducers['/binary-search-tree'];
   return {
     tree,
     d3Representation,

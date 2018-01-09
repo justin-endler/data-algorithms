@@ -10,9 +10,10 @@ import reducers from './reducers';
 const createStoreWithMiddleware = applyMiddleware()(createStore);
 
 ReactDOM.render(
-  <HashRouter>
-    <Provider store={createStoreWithMiddleware(reducers)}>
+  <Provider store={createStoreWithMiddleware(reducers)}>
+    <HashRouter>
       <App />
-    </Provider>
-  </HashRouter>
-  , document.querySelector('.container'));
+    </HashRouter>
+  </Provider>
+
+  , document.getElementById('wrapper'));

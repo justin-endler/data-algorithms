@@ -27,7 +27,7 @@ const getBinaryTreeTranslate = (container) => {
   var dimensions = container.getBoundingClientRect();
   return {
     x: dimensions.width / 2,
-    y: dimensions.height / 4
+    y: 20
   };
 };
 
