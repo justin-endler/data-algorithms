@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { insertBinarySearchTreeNode } from '../actions';
-import { inflate } from 'zlib';
 
 class BinaryTreeNodeInsert extends Component {
   constructor(props) {

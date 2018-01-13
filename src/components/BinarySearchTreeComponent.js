@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Tree from 'react-d3-tree';
 import { svg } from 'd3';
-import BinarySearchTree from '../classes/BinarySearchTree';
 import BinaryTreeNodeInsert from './BinaryTreeNodeInsert';
 import {
   initBinarySearchTree,
   removeBinarySearchTreeNode,
   replaceBinarySearchTree
 } from '../actions';
+
+import '../css/BinarySearchTreeComponent.css';
 
 class BinarySearchTreeComponent extends Component {
   constructor(props) {

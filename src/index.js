@@ -2,18 +2,21 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
-import { HashRouter } from 'react-router-dom'
-
-import App from './components/app';
+import { MemoryRouter } from 'react-router-dom';
+import App from './components/App';
 import reducers from './reducers';
+import registerServiceWorker from './registerServiceWorker';
+import './index.css';
 
 const createStoreWithMiddleware = applyMiddleware()(createStore);
 
 ReactDOM.render(
   <Provider store={createStoreWithMiddleware(reducers)}>
-    <HashRouter>
+    <MemoryRouter>
       <App />
-    </HashRouter>
+    </MemoryRouter>
   </Provider>
 
   , document.getElementById('wrapper'));
+
+registerServiceWorker();
