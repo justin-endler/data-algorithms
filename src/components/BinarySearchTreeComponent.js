@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Tree from 'react-d3-tree';
-import { svg } from 'd3';
-import BinaryTreeNodeInsert from './BinaryTreeNodeInsert';
+import { path as d3Path } from 'd3';
+import InputWithSuggestions from './InputWithSuggestions';
+
 import {
   initBinarySearchTree,
   removeBinarySearchTreeNode,
-  replaceBinarySearchTree
+  replaceBinarySearchTree,
+  insertBinarySearchTreeNode
 } from '../actions';
 
 import '../css/BinarySearchTreeComponent.css';
@@ -20,7 +22,14 @@ class BinarySearchTreeComponent extends Component {
     }
 
     this.pathFunc = this.pathFunc.bind(this);
+    this.handleInsert = this.handleInsert.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
+  }
+
+  // @todo grow-shrink the BST as needed to fit the screen
+
+  handleInsert(value) {
+    this.props.insertBinarySearchTreeNode(value, this.props.tree);
   }
 
   handleRemove(data) {
@@ -44,15 +53,16 @@ class BinarySearchTreeComponent extends Component {
     if (linkData.target && linkData.target.name === 'leaf') {
       return;
     }
+
     return this._diagonalPath(linkData);
   }
 
-  // custom port of react-d3-tree's diagonalPath
-  _diagonalPath(linkData) {
-    const diagonal = svg
-      .diagonal()
-      .projection(d => ([d.x, d.y]));
-    return diagonal(linkData);
+  _diagonalPath({ source, target }) {
+    const path = d3Path()
+    path.moveTo(source.x, source.y);
+    path.lineTo(target.x, target.y);
+
+    return path;
   }
 
   render() {
@@ -60,7 +70,14 @@ class BinarySearchTreeComponent extends Component {
       return (
         <div>
           <div className="container">
-            <BinaryTreeNodeInsert tree={this.props.tree} />
+            <InputWithSuggestions
+              formId="binary-tree-form"
+              inputId="binary-tree-input"
+              placeholder="Number"
+              submitValue="Insert"
+              handleSubmit={this.handleInsert}
+              label="Insert Node"
+            />
             <div>Click on a node to remove it.</div>
           </div>
           <div id="binary-search-tree-container" ref={tc => {this.treeContainer = tc;}}>
@@ -78,7 +95,15 @@ class BinarySearchTreeComponent extends Component {
     }
     return (
       <div className="container">
-        <BinaryTreeNodeInsert tree={this.props.tree} />
+        {/* <BinaryTreeNodeInsert tree={this.props.tree} /> */}
+        <InputWithSuggestions
+          formId="binary-tree-form"
+          inputId="binary-tree-input"
+          placeholder="Number"
+          submitValue="Insert"
+          handleSubmit={this.handleInsert}
+          label="Insert Node"
+        />
       </div>
     );
   }
@@ -96,5 +121,6 @@ function mapStateToProps(reducers) {
 export default connect(mapStateToProps, {
   initBinarySearchTree,
   removeBinarySearchTreeNode,
-  replaceBinarySearchTree
+  replaceBinarySearchTree,
+  insertBinarySearchTreeNode
 })(BinarySearchTreeComponent);

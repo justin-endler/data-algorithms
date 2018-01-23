@@ -1,4 +1,18 @@
-import * as actionTypes from '../actions';
+import {
+  INIT_BINARY_SEARCH_TREE,
+  INSERT_BINARY_SEARCH_TREE_NODE,
+  IGNORE,
+  REMOVE_BINARY_SEARCH_TREE_NODE,
+  REPLACE_BINARY_SEARCH_TREE
+} from '../actions';
+
+const actionTypes = [
+  INIT_BINARY_SEARCH_TREE,
+  INSERT_BINARY_SEARCH_TREE_NODE,
+  IGNORE,
+  REMOVE_BINARY_SEARCH_TREE_NODE,
+  REPLACE_BINARY_SEARCH_TREE
+];
 
 const TreeReducer = (state, action) => {
   state = state || {
@@ -6,7 +20,7 @@ const TreeReducer = (state, action) => {
   };
 
   // ignore irrelevant actions
-  if (!actionTypes[action.type]) {
+  if (actionTypes.indexOf(action.type) === -1) {
     return state;
   }
 
