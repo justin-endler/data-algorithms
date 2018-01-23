@@ -7,15 +7,18 @@
   "repository": "git@github.com:justin-endler/data-algorithms.git",
   "license": "MIT",
   "dependencies": {
+    "d3": "4.12.2",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-scripts": "1.0.17",
-    "d3": "3.5.17",
     "react-d3-tree": "^1.7.0",
+    "react-dom": "^16.2.0",
     "react-redux": "4.4.8",
     "react-router": "^4.0.0",
     "react-router-dom": "^4.2.2",
-    "redux": "^3.0.4"
+    "react-scripts": "1.0.17",
+    "redux": "^3.0.4",
+    "async": "^2.3.0",
+    "axios": "^0.17.1",
+    "redux-thunk": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
