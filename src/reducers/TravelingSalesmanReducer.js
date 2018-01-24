@@ -12,10 +12,10 @@ import {
 } from '../actions';
 import usaCities from '../data/usa-cities';
 
-// @todo implement removal of a city
-// @todo add disclaimer about accounting for cities already handled by a route until it's solved
-// @todo guard agaist the intermittent geoJson bug, rarely happens
+const coordinateSampleRate = 8;
 
+// @todo implement removal of a city
+// @todo guard agaist the intermittent geoJson bug, rarely happens
 
 var selectedCities = {
   type: 'FeatureCollection',
@@ -44,9 +44,9 @@ export const TravelingSalesmanReducer = (state, action) => {
 export const TravelingSalesmanMarkerReducer = (state, action) => {
   switch(action.type) {
     case MOVE_TRAVELING_SALESMAN_MARKER:
-      let markerIndex = (state.markerIndex || 0) + 3;
+      let markerIndex = (state.markerIndex || 0) + coordinateSampleRate;
       if (markerIndex >= state.points.length) {
-        markerIndex = 3;
+        markerIndex = coordinateSampleRate;
       }
       return Object.assign({}, state, {
         markerIndex
@@ -57,7 +57,7 @@ export const TravelingSalesmanMarkerReducer = (state, action) => {
       });
     default:
       return state || {
-        markerIndex: 3,
+        markerIndex: coordinateSampleRate,
         points: []
       };
   }
