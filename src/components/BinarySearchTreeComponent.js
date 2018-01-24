@@ -76,7 +76,7 @@ class BinarySearchTreeComponent extends Component {
               placeholder="Number"
               submitValue="Insert"
               handleSubmit={this.handleInsert}
-              label="Insert Node"
+              label="Insert tree nodes one at a time."
             />
             <div>Click on a node to remove it.</div>
           </div>
@@ -95,14 +95,13 @@ class BinarySearchTreeComponent extends Component {
     }
     return (
       <div className="container">
-        {/* <BinaryTreeNodeInsert tree={this.props.tree} /> */}
         <InputWithSuggestions
           formId="binary-tree-form"
           inputId="binary-tree-input"
           placeholder="Number"
           submitValue="Insert"
           handleSubmit={this.handleInsert}
-          label="Insert Node"
+          label="Insert tree nodes one at a time."
         />
       </div>
     );

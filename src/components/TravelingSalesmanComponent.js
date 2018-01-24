@@ -17,9 +17,6 @@ import {
 
 import '../css/TravelingSalesman.css';
 
-// @todo credit the US census bureau for the data
-// @todo credit open street map on the page and possibly in a license or readme
-// @todo https://wiki.openstreetmap.org/wiki/Legal_FAQ#3a._I_would_like_to_use_OpenStreetMap_maps._How_should_I_credit_you.3F
 import usaStatesBoundary from '../data/usa-states-boundary';
 
 // configure to show the USA lower 48
@@ -156,7 +153,7 @@ class TravelingSalesmanComponent extends Component {
           submitValue="Add"
           suggestions={this.props.suggestions}
           handleSubmit={this.props.addTravelingSalesmanCity}
-          label="Insert City"
+          label="Add one city at a time."
         />
         <div id="traveling-salesman-map-wrapper">
           <svg width={width} height={height}>
@@ -176,7 +173,7 @@ class TravelingSalesmanComponent extends Component {
               {...geoPathPlacementSettings}
               routes={this.props.routes}
               tourPath={this.props.shortestTourPath}
-              interval={300}
+              interval={350}
               fill="HotPink"
             />
           </svg>

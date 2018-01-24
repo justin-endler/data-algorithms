@@ -33,7 +33,6 @@ export default props => {
   const geoPath = d3GeoPath()
     .projection(albersProjection);
 
-// @todo bus the marker drawing speed up to properties and then up to app config
   const path = geoPath(geoJson);
 
   return (

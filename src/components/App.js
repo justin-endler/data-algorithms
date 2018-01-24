@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Nav from './Nav';
 import { Switch, Route } from 'react-router-dom';
 import BinarySearchTreeComponent from './BinarySearchTreeComponent';
-import Home from './Home';
+import About from './About';
 import TravelingSalesmanComponent from './TravelingSalesmanComponent';
 
 export default class App extends Component {
@@ -12,7 +12,7 @@ export default class App extends Component {
         <Nav />
         <main>
           <Switch>
-            <Route exact path='/' component={Home} />
+            <Route exact path='/' component={About} />
             <Route exact path='/traveling-salesman' component={TravelingSalesmanComponent} />
             <Route exact path='/binary-search-tree' component={BinarySearchTreeComponent} />
           </Switch>
