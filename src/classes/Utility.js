@@ -17,4 +17,8 @@ Utility.findValue = (obj, access, fallback = null) => {
   return obj;
 };
 
+Utility.getRouteId = (city1, city2) => {
+  return [city1, city2].sort().join(';');
+};
+
 export default Utility;

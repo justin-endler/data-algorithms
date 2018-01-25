@@ -124,6 +124,6 @@ export const getNewTravelingSalesmanRoutes = newRoutes => {
       error => {
         dispatch(getNewTravelingSalesmanRoutesCreator(newRoutes));
       }
-    )
+    );
   };
 };

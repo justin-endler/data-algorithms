@@ -27,7 +27,7 @@ class TravelingSalesmanMarker extends Component {
       rotate,
       center,
       translate
-    } = props; // @todo this sucks. also occurs a lot in mapStateToProps, anything better out there?
+    } = props;
 
     this.geoPathPlacementSettings = {
       scale,
@@ -67,10 +67,9 @@ class TravelingSalesmanMarker extends Component {
   }
 
   componentDidUpdate() {
-    // @todo create stop/start button
     setTimeout(() => {
       this.props.moveTravelingSalesmanMarker();
-    }, this.props.interval); // @todo use propTypes to defaul the interval to something
+    }, this.props.interval); // @todo use propTypes to default the interval to something
   }
 
   render() {
@@ -80,7 +79,7 @@ class TravelingSalesmanMarker extends Component {
 
     geoJson.geometry.coordinates = this.props.points[this.props.markerIndex];
 
-    // @todo use propTypes or whatever to default props.fill to something
+    // @todo use propTypes to default props.fill to something
     return (
       <GeoPath
         geoJson={geoJson}
@@ -107,3 +106,5 @@ export default connect(mapStateToProps, {
   moveTravelingSalesmanMarker,
   updateTravelingSalesmanMarkerPoints
 })(TravelingSalesmanMarker);
+
+// @todo create stop/start button

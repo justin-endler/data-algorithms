@@ -1,9 +1,11 @@
 import _ from 'lodash';
+import Utility from './Utility';
 
 export default class TravelingSalesman {
-  constructor(cities, routes) {
+  constructor(cities, routes, usaCities) {
     this.cities = cities;
     this.routes = routes;
+    this.usaCities = usaCities;
   }
 
   // O(n^2) with improved accuracy over NN, memoized to something like O(n * (n-1)) with larger input sets
@@ -12,7 +14,7 @@ export default class TravelingSalesman {
     // Keep track of shortest route
     var minPathDistance = null;
     var shortestTourPath = null;
-    console.time('sNN');
+
     _.each(this.cities, city => {
       const result = this.nearestNeighbor(city, minPathDistance);
       if (result && (minPathDistance === null || result.distance < minPathDistance)) {
@@ -20,7 +22,7 @@ export default class TravelingSalesman {
         shortestTourPath = result.path;
       }
     });
-    console.timeEnd('sNN');
+
     // Rotate shortest tour path to begin with 1st input city
     const originCityIndex = shortestTourPath.indexOf(this.cities[0]);
     // If it's not already the first city in the tour
@@ -32,13 +34,12 @@ export default class TravelingSalesman {
   }
 
   // O(n) with poor accuracy
-  nearestNeighbor(origin = this.cities[0], minPathDistance, cities = this.cities, pathDistance = 0.0, path = []) {
-    this.totalCalls++;
-
+  nearestNeighbor(origin, minPathDistance, cities = this.cities, pathDistance = 0.0, path = []) {
     var citiesCopy = cities.slice();
 
     // Add city to path
-    path.push(origin);
+    var pathCopy = path.slice();
+    pathCopy.push(origin);
 
     // Remove city from cities
     _.remove(citiesCopy, city => {
@@ -47,11 +48,19 @@ export default class TravelingSalesman {
 
     // All cities accounted for. Return.
     if (!citiesCopy.length) {
+      // Add on last path to complete the tour
+      let routeId = Utility.getRouteId(pathCopy[0], pathCopy[pathCopy.length - 1]);
+      let route = this.routes[routeId];
+      if (route) {
+        pathDistance += route.distance;
+      }
+
       return {
-        path,
+        path: pathCopy,
         distance: pathDistance
       };
     }
+// @todo lint everything
 
     var minDistance = null;
     var nearestCity = null;
@@ -62,7 +71,7 @@ export default class TravelingSalesman {
         return;
       }
       // Get route
-      const routeId = [origin, city].sort().join(';');
+      const routeId = Utility.getRouteId(origin, city);
       const route = this.routes[routeId];
       if (!route) {
         return;
@@ -73,7 +82,7 @@ export default class TravelingSalesman {
       }
     });
 
-    // Increase todal path distance
+    // Increase total path distance, // @test done in function call now
     pathDistance += minDistance;
 
     // Another nearest neighbor run has already performed this well. Bail out
@@ -81,6 +90,6 @@ export default class TravelingSalesman {
       return null;
     }
 
-    return this.nearestNeighbor(nearestCity, minPathDistance, citiesCopy, pathDistance, path);
+    return this.nearestNeighbor(nearestCity, minPathDistance, citiesCopy, pathDistance, pathCopy);
   }
 }

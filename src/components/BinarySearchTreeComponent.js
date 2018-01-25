@@ -26,8 +26,6 @@ class BinarySearchTreeComponent extends Component {
     this.handleRemove = this.handleRemove.bind(this);
   }
 
-  // @todo grow-shrink the BST as needed to fit the screen
-
   handleInsert(value) {
     this.props.insertBinarySearchTreeNode(value, this.props.tree);
   }
@@ -58,7 +56,7 @@ class BinarySearchTreeComponent extends Component {
   }
 
   _diagonalPath({ source, target }) {
-    const path = d3Path()
+    const path = d3Path();
     path.moveTo(source.x, source.y);
     path.lineTo(target.x, target.y);
 
@@ -123,3 +121,6 @@ export default connect(mapStateToProps, {
   replaceBinarySearchTree,
   insertBinarySearchTreeNode
 })(BinarySearchTreeComponent);
+
+// @todo grow-shrink the BST as needed to fit the screen
+// @todo update binary search tree style to avoid the clashing number on line
