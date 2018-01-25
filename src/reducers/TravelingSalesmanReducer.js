@@ -14,9 +14,6 @@ import usaCities from '../data/usa-cities';
 
 const coordinateSampleRate = 8;
 
-// @todo implement removal of a city
-// @todo guard agaist the intermittent geoJson bug, rarely happens
-
 var selectedCities = {
   type: 'FeatureCollection',
   features: []
@@ -63,10 +60,6 @@ export const TravelingSalesmanMarkerReducer = (state, action) => {
   }
 };
 
-// @todo add a little writeup explanation for the user
-// @todo publish the total miles of the route
-// @todo style some more
-
 const reduceAddTravelingSalesmanCity = (state, action) => {
   // Validate new city
   const newCityFeature = _.find(usaCities.features, feature => {
@@ -101,7 +94,25 @@ const reduceAddTravelingSalesmanCity = (state, action) => {
     suggestions,
     selectedCities
   });
-}
+};
+
+// ported from https://gist.github.com/moshmage/2ae02baa14d10bd6092424dcef5a1186
+const cityWithinRadius = (city, point, kilometers) => {
+  const earthRadius = 6371;
+  const latitudeDifference = getRadians(point[1] - city[1]);
+  const longitudeDifference = getRadians(point[0] - city[0]);
+  const y = Math.sin(latitudeDifference/2);
+  const x = Math.sin(longitudeDifference/2);
+  const a = y * y + Math.cos(getRadians(city[1])) * Math.cos(getRadians(point[1])) * x * x;
+  const c = 2 * Math.asin(Math.sqrt(a));
+  const proximity = earthRadius * c;
+
+  return proximity <= kilometers;
+};
+
+const getRadians = (degrees) => {
+  return Math.tan(degrees * (Math.PI/180));
+};
 
 const reduceGetNewTravelingSalesmanRoutes = (state, action) => {
   const { newRoutes } = action.payload;
@@ -110,8 +121,51 @@ const reduceGetNewTravelingSalesmanRoutes = (state, action) => {
   _.forOwn(newRoutes, osmToGeoJson);
 
   const routes = Object.assign({}, state.routes, newRoutes);
-  const travelingSalesman = new TravelingSalesman(state.cities, routes);
-  const shortestTourPath = travelingSalesman.shortestNearestNeighbor();
+
+  // Is this city already covered by an existing route?
+  var alreadyCovered = false;
+  var shortestTourPath;
+  const newCity = _.difference(state.cities, state.shortestTourPath)[0];
+  if (newCity) {
+    let [
+      newCityName,
+      newCityState
+    ] = newCity.split(',');
+
+    let newCityCoordinates = Utility.findValue(usaCities, 'features', []).find(feature => {
+      return feature.properties.city === newCityName.trim() && feature.properties.state === newCityState.trim();
+    }).geometry.coordinates;
+
+    _.each(state.shortestTourPath, (currentCity, index) => {
+      var nextCity = state.shortestTourPath[index + 1];
+      if (!nextCity) {
+        nextCity = state.shortestTourPath[0];
+      }
+
+      const routeId = Utility.getRouteId(currentCity, nextCity);
+      const route = routes[routeId];
+      const coordinates = Utility.findValue(route, 'geoJson.geometry.coordinates', []);
+      _.each(coordinates, pair => {
+        if (cityWithinRadius(pair, newCityCoordinates, 10)) {
+          alreadyCovered = true;
+          shortestTourPath = state.shortestTourPath.slice();
+          let nextCityIndex = shortestTourPath.indexOf(nextCity);
+          if (nextCityIndex === 0) {
+            shortestTourPath.push(newCity);
+          } else {
+            shortestTourPath.splice(nextCityIndex, 0, newCity);
+          }
+          return false;
+        }
+      });
+      return !alreadyCovered;
+    });
+  }
+
+  if (!alreadyCovered) {
+    let travelingSalesman = new TravelingSalesman(state.cities, routes, usaCities);
+    shortestTourPath = travelingSalesman.shortestNearestNeighbor();
+  }
 
   return Object.assign({}, state, {
     routes,

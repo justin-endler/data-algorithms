@@ -10,6 +10,8 @@ import GeoPath from './GeoPath';
 import InputWithSuggestions from './InputWithSuggestions';
 import TravelingSalesmanMarker from './TravelingSalesmanMarker';
 
+import Utility from '../classes/Utility';
+
 import {
   addTravelingSalesmanCity,
   getNewTravelingSalesmanRoutes
@@ -121,7 +123,7 @@ class TravelingSalesmanComponent extends Component {
       if (!nextCity) {
         nextCity = this.props.shortestTourPath[0];
       }
-      const routeId = [city, nextCity].sort().join(';');
+      const routeId = Utility.getRouteId(city, nextCity);
       return this.props.routes[routeId];
     }).filter(Boolean);
     // Use a sequential color gradient to help represent direction of travel
@@ -152,6 +154,7 @@ class TravelingSalesmanComponent extends Component {
           placeholder="City"
           submitValue="Add"
           suggestions={this.props.suggestions}
+          threshold={1}
           handleSubmit={this.props.addTravelingSalesmanCity}
           label="Add one city at a time."
         />
@@ -212,3 +215,5 @@ export default connect(mapStateToProps, {
   addTravelingSalesmanCity,
   getNewTravelingSalesmanRoutes
 })(TravelingSalesmanComponent);
+
+// @todo implement removal of a city
