@@ -27,7 +27,7 @@ export const insertBinarySearchTreeNode = (data, tree) => {
   var type = INSERT_BINARY_SEARCH_TREE_NODE;
   const newTree = tree.clone();
   const insertResult = newTree.insert(data);
-  // avoid rendering on failed insert due to duplicate value
+  // Avoid rendering on failed insert due to duplicate value
   if (insertResult === false) {
     type = IGNORE;
   }

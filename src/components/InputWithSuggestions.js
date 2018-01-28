@@ -52,6 +52,9 @@ class InputWithSuggestions extends Component {
     if (e) {
       e.preventDefault();
     }
+    if (this.props.validateSubmit && !this.props.validateSubmit(this.state.value)) {
+      return;
+    }
     this.props.handleSubmit(this.state.value);
 
     this.setState({
@@ -99,6 +102,7 @@ class InputWithSuggestions extends Component {
               onChange={this.handleChange}
               placeholder={this.props.placeholder}
               autoComplete="off"
+              autoFocus={this.props.autoFocus || false}
             />
           </label>
           <input
