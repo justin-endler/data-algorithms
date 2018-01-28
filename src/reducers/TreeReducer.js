@@ -1,7 +1,6 @@
 import {
   INIT_BINARY_SEARCH_TREE,
   INSERT_BINARY_SEARCH_TREE_NODE,
-  IGNORE,
   REMOVE_BINARY_SEARCH_TREE_NODE,
   REPLACE_BINARY_SEARCH_TREE
 } from '../actions';
@@ -9,7 +8,6 @@ import {
 const actionTypes = [
   INIT_BINARY_SEARCH_TREE,
   INSERT_BINARY_SEARCH_TREE_NODE,
-  IGNORE,
   REMOVE_BINARY_SEARCH_TREE_NODE,
   REPLACE_BINARY_SEARCH_TREE
 ];
@@ -19,7 +17,7 @@ const TreeReducer = (state, action) => {
     d3Representation: []
   };
 
-  // ignore irrelevant actions
+  // Ignore irrelevant actions
   if (actionTypes.indexOf(action.type) === -1) {
     return state;
   }

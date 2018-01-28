@@ -60,7 +60,6 @@ export default class TravelingSalesman {
         distance: pathDistance
       };
     }
-// @todo lint everything
 
     var minDistance = null;
     var nearestCity = null;
@@ -82,7 +81,7 @@ export default class TravelingSalesman {
       }
     });
 
-    // Increase total path distance, // @test done in function call now
+    // Increase total path distance
     pathDistance += minDistance;
 
     // Another nearest neighbor run has already performed this well. Bail out
