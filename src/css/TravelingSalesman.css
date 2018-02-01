@@ -4,6 +4,11 @@
   z-index: 10;
 }
 
+#city-click-message {
+  margin-left: 45px;
+  position: absolute;
+}
+
 #traveling-salesman-form .list-group {
   position: absolute;
 }
@@ -14,5 +19,5 @@
 
 #traveling-salesman-map-wrapper {
   position: relative;
-  bottom: 70px;
+  bottom: 47px;
 }

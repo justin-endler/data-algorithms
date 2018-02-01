@@ -1,0 +1,25 @@
+{
+  "usaMap": {
+    "width": 1400,
+    "height": 540,
+    "geoPathPlacementSettings": {
+      "scale": 1000,
+      "rotate": [90, 0],
+      "center": [-7, 38]
+    },
+    "cityRadius": 10,
+    "coordinateSampleRate": 20,
+    "minimumPopulation": 60000
+  },
+  "inputSuggestionsThreshold": 1,
+  "salesmanSpeedFactor": 20,
+  "binaryTree": {
+    "nodeTextLayout": {
+      "textAnchor": "start",
+      "x": -5,
+      "y": -25
+    },
+    "transitionDuration": 300,
+    "nodeWidth": 20
+  }
+}

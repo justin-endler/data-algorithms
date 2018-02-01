@@ -1,12 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Tree from 'react-d3-tree';
-import {
-  path as d3Path,
-  select as d3Select,
-  zoom as d3Zoom,
-  event as d3Event
-} from 'd3';
+import * as d3 from 'd3';
 
 import InputWithSuggestions from './InputWithSuggestions';
 
@@ -19,13 +14,14 @@ import {
 
 import '../css/BinarySearchTreeComponent.css';
 
-const nodeTextLayout = {
-  textAnchor: 'start',
-  x: -5,
-  y: -25
-};
-const transitionDuration = 300;
-const nodeWidth = 20;
+import * as config from '../config';
+
+const {
+  nodeTextLayout,
+  transitionDuration,
+  nodeWidth
+} = config.binaryTree;
+
 const nodeWidthBuffer = nodeWidth * 3;
 
 class BinarySearchTreeComponent extends Component {
@@ -67,15 +63,15 @@ class BinarySearchTreeComponent extends Component {
   componentDidUpdate(previousProps) {
     if (this.props.tree.compare(previousProps.tree)) {
       // Maintain appropriate zoom level
-      const treeG = d3Select('.rd3t-g');
+      const treeG = d3.select('.rd3t-g');
       const containerRect = this.treeContainer ? this.treeContainer.getBoundingClientRect() : null;
       var widthFactor = 1;
       if (!treeG.empty() && containerRect) {
         let treeGNode = treeG.node();
         let treeGRect = treeGNode.getBoundingClientRect();
 
-        let zoomG = d3Zoom().on('zoom', () => {
-          treeG.attr('transform', d3Event.transform);
+        let zoomG = d3.zoom().on('zoom', () => {
+          treeG.attr('transform', d3.event.transform);
         });
 
         let adjustedWidthFactor = containerRect.width / (treeGRect.width + nodeWidthBuffer);
@@ -113,7 +109,7 @@ class BinarySearchTreeComponent extends Component {
       return;
     }
 
-    const path = d3Path();
+    const path = d3.path();
     path.moveTo(source.x, source.y);
     path.lineTo(target.x, target.y);
     return path;
