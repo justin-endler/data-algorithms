@@ -9,9 +9,9 @@ export const REMOVE_BINARY_SEARCH_TREE_NODE = 'REMOVE_BINARY_SEARCH_TREE_NODE';
 export const REPLACE_BINARY_SEARCH_TREE = 'REPLACE_BINARY_SEARCH_TREE';
 export const RANDOMIZE_SCATTER_PLOT_DATA = 'RANDOMIZE_SCATTER_PLOT_DATA';
 export const ADD_TRAVELING_SALESMAN_CITY = 'ADD_TRAVELING_SALESMAN_CITY';
+export const REMOVE_TRAVELING_SALESMAN_CITY = 'REMOVE_TRAVELING_SALESMAN_CITY';
 export const GET_NEW_TRAVELING_SALESMAN_ROUTES = 'GET_NEW_TRAVELING_SALESMAN_ROUTES';
-export const MOVE_TRAVELING_SALESMAN_MARKER = 'MOVE_TRAVELING_SALESMAN_MARKER';
-export const UPDATE_TRAVELING_SALESMAN_MARKER_POINTS = 'UPDATE_TRAVELING_SALESMAN_MARKER_POINTS';
+export const UPDATE_TRAVELING_SALESMAN_MARKER_PATHS = 'UPDATE_TRAVELING_SALESMAN_MARKER_PATHS';
 
 export const initBinarySearchTree = () => {
   const tree = new BinarySearchTree();
@@ -73,17 +73,20 @@ export const addTravelingSalesmanCity = city => {
   };
 };
 
-export const moveTravelingSalesmanMarker = () => {
+export const removeTravelingSalesmanCity = city => {
   return {
-    type: MOVE_TRAVELING_SALESMAN_MARKER
+    type: REMOVE_TRAVELING_SALESMAN_CITY,
+    payload: {
+      city
+    }
   };
 };
 
-export const updateTravelingSalesmanMarkerPoints = (points) => {
+export const updateTravelingSalesmanMarkerPaths = (tweenData) => {
   return {
-    type: UPDATE_TRAVELING_SALESMAN_MARKER_POINTS,
+    type: UPDATE_TRAVELING_SALESMAN_MARKER_PATHS,
     payload: {
-      points
+      tweenData
     }
   };
 };

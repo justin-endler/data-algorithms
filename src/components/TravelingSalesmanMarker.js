@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
+import * as d3 from 'd3';
+import async from 'async';
+
 import GeoPath from './GeoPath';
 
-import {
-  moveTravelingSalesmanMarker,
-  updateTravelingSalesmanMarkerPoints
-} from '../actions';
+import { updateTravelingSalesmanMarkerPaths } from '../actions';
 
 import Utility from '../classes/Utility';
 
@@ -38,73 +39,137 @@ class TravelingSalesmanMarker extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // Set points to travel over if tour has changed
+    // Set paths to travel over if tour has changed
     if (nextProps.tourPath.length === this.props.tourPath.length) {
       return;
     }
-    var points = [];
-    nextProps.tourPath.forEach((fromCity, index) => {
+
+    const tweenData = nextProps.tourPath.map((fromCity, index) => {
       var toCity = nextProps.tourPath[index + 1];
       if (!toCity) {
         toCity = nextProps.tourPath[0];
       }
+      // There's only one city on the map, return
+      if (fromCity === toCity) {
+        return;
+      }
       // Determine direction of route and adjust
       var routeId = `${fromCity};${toCity}`;
+      var reversed = false;
       var route = nextProps.routes[routeId];
-      var coordinates;
-      if (route) {
-        coordinates = Utility.findValue(route, 'geoJson.geometry.coordinates', []);
-        points = points.concat(coordinates);
-      } else {
+      var origin = Utility.findValue(route, 'from.coordinates');
+
+      if (!route) {
         routeId = `${toCity};${fromCity}`;
         route = nextProps.routes[routeId];
-        coordinates = Utility.findValue(route, 'geoJson.geometry.coordinates', []);
-        points = points.concat(coordinates.slice().reverse());
+        origin = Utility.findValue(route, 'to.coordinates');
+        reversed = true;
       }
-    });
 
-    this.props.updateTravelingSalesmanMarkerPoints(points);
+      return {
+        id: encodePathId(routeId, reversed),
+        reversed,
+        origin
+      };
+    }).filter(Boolean);
+
+    this.props.updateTravelingSalesmanMarkerPaths(tweenData);
   }
 
   componentDidUpdate() {
-    setTimeout(() => {
-      this.props.moveTravelingSalesmanMarker();
-    }, this.props.interval); // @todo use propTypes to default the interval to something
+    const { tweenData } = this.props;
+    if (!tweenData) {
+      return;
+    }
+
+    const markerElement = d3.select(`#${this.props.pathId}`);
+    async.eachSeries(
+      tweenData,
+      (path, callback) => {
+        const pathElement = d3.select(`#${path.id}`).node();
+        if (!pathElement) {
+          return callback();
+        }
+
+        // Move the marker to fromCity
+        const markerPathData = markerElement.attr('d');
+        const fromPoint = pathElement.getPointAtLength(0);
+        const pathLength = pathElement.getTotalLength();
+
+        if (markerPathData && markerPathData.indexOf('M') === 0) {
+          let moveToCoordinatesEndPosition = markerPathData.split(/[a-zA-Z]/)[1].length;
+          let newMarkerPathData = `M${fromPoint.x},${fromPoint.y}${markerPathData.slice(moveToCoordinatesEndPosition)}`;
+          markerElement.attr('d', newMarkerPathData);
+        }
+
+        markerElement
+          .transition()
+          .duration(pathLength * this.props.durationFactor)
+          .attrTween('transform', this._translateAlong(pathElement, pathLength, fromPoint, path))
+          .on('end', callback);
+      }
+    );
+  }
+
+  _translateAlong = (pathElement, pathLength, fromPoint, path) => {
+    var tTerm = 0;
+    if (path.reversed) {
+      tTerm = -1;
+    }
+
+    return () => {
+      return t => {
+        t = Math.abs(t + tTerm);
+        const point = pathElement.getPointAtLength(t * pathLength);
+        return `translate(${point.x - fromPoint.x}, ${point.y - fromPoint.y})`;
+      };
+    };
   }
 
   render() {
-    if (!this.props.points.length) {
+    var { tweenData } = this.props;
+    if (!tweenData.length) {
       return <g />;
     }
 
-    geoJson.geometry.coordinates = this.props.points[this.props.markerIndex];
+    const currentGeoJson = Object.assign({}, geoJson);
 
-    // @todo use propTypes to default props.fill to something
+    var origin = tweenData[0].origin;
+    if (tweenData[0].reversed) {
+      origin = tweenData[1].origin;
+    }
+    currentGeoJson.geometry.coordinates = origin;
+
     return (
       <GeoPath
-        geoJson={geoJson}
+        geoJson={currentGeoJson}
         {...this.geoPathPlacementSettings}
         fill={this.props.fill}
+        ref={geoPath => {this.geoPath = geoPath;}}
+        pathId={this.props.pathId}
       />
     );
   };
 }
 
-function mapStateToProps(reducers) {
-  const {
-    markerIndex,
-    points
-  } = reducers['/traveling-salesman/marker'];
+// Allows usage of the "fromCity; toCity" id format but encodes for use in DOM element ids
+const encodePathId = (str = '', reversed) => {
+  str = str
+    .replace(/\s/g, '')
+    .replace(/,/g, '-')
+    .replace(';','_');
+  if (reversed) {
+    str += '_reversed';
+  }
+  return str;
+};
 
-  return {
-    markerIndex,
-    points
-  };
+function mapStateToProps(reducers) {
+  const { tweenData } = reducers['/traveling-salesman/marker'];
+
+  return { tweenData };
 }
 
-export default connect(mapStateToProps, {
-  moveTravelingSalesmanMarker,
-  updateTravelingSalesmanMarkerPoints
-})(TravelingSalesmanMarker);
+export { encodePathId };
 
-// @todo create stop/start button
+export default connect(mapStateToProps, { updateTravelingSalesmanMarkerPaths })(TravelingSalesmanMarker);

@@ -6,23 +6,32 @@ import TravelingSalesman from '../classes/TravelingSalesman';
 
 import {
   ADD_TRAVELING_SALESMAN_CITY,
+  REMOVE_TRAVELING_SALESMAN_CITY,
   GET_NEW_TRAVELING_SALESMAN_ROUTES,
-  MOVE_TRAVELING_SALESMAN_MARKER,
-  UPDATE_TRAVELING_SALESMAN_MARKER_POINTS
+  UPDATE_TRAVELING_SALESMAN_MARKER_PATHS
 } from '../actions';
+
 import usaCities from '../data/usa-cities';
 
-const coordinateSampleRate = 8;
+import * as config from '../config';
 
-var selectedCities = {
-  type: 'FeatureCollection',
-  features: []
-};
+const {
+  coordinateSampleRate,
+  minimumPopulation
+} = config.usaMap;
+
+const filteredCities = _.filter(usaCities.features, cityObj => {
+  return parseInt(cityObj.properties.population, 10) >= minimumPopulation;
+});
+
+var selectedCities = [];
 
 export const TravelingSalesmanReducer = (state, action) => {
   switch(action.type) {
     case ADD_TRAVELING_SALESMAN_CITY:
       return reduceAddTravelingSalesmanCity(state, action);
+    case REMOVE_TRAVELING_SALESMAN_CITY:
+      return reduceRemoveTravelingSalesmanCity(state, action);
     case GET_NEW_TRAVELING_SALESMAN_ROUTES:
       return reduceGetNewTravelingSalesmanRoutes(state, action);
     default:
@@ -39,30 +48,19 @@ export const TravelingSalesmanReducer = (state, action) => {
 };
 
 export const TravelingSalesmanMarkerReducer = (state, action) => {
-  switch(action.type) {
-    case MOVE_TRAVELING_SALESMAN_MARKER:
-      let markerIndex = (state.markerIndex || 0) + coordinateSampleRate;
-      if (markerIndex >= state.points.length) {
-        markerIndex = coordinateSampleRate;
-      }
-      return Object.assign({}, state, {
-        markerIndex
-      });
-    case UPDATE_TRAVELING_SALESMAN_MARKER_POINTS:
-      return Object.assign({}, state, {
-        points: action.payload.points
-      });
-    default:
-      return state || {
-        markerIndex: coordinateSampleRate,
-        points: []
-      };
+  if (action.type !== UPDATE_TRAVELING_SALESMAN_MARKER_PATHS) {
+    return state || {
+      tweenData: []
+    };
   }
+  return Object.assign({}, state, {
+    tweenData: action.payload.tweenData
+  });
 };
 
 const reduceAddTravelingSalesmanCity = (state, action) => {
   // Validate new city
-  const newCityFeature = _.find(usaCities.features, feature => {
+  const newCityFeature = _.find(filteredCities, feature => {
     return action.payload.city === TravelingSalesmanComponent.getCityName(feature);
   });
   if (!newCityFeature) {
@@ -78,13 +76,36 @@ const reduceAddTravelingSalesmanCity = (state, action) => {
   const suggestions = getSuggestions(cities);
 
   // Fill out getJson data for selected cities
-  selectedCities.features = cities.map(city => {
+  selectedCities = cities.map(city => {
     // Use the new city feature as a memo for a little bit of savings
     if (city === newCity) {
       return newCityFeature;
     }
     // Get the geoJson feature of the city
-    return _.find(usaCities.features, feature => {
+    return _.find(filteredCities, feature => {
+      return city === TravelingSalesmanComponent.getCityName(feature);
+    });
+  }).filter(Boolean);
+
+  return Object.assign({}, state, {
+    cities,
+    suggestions,
+    selectedCities
+  });
+};
+
+const reduceRemoveTravelingSalesmanCity = (state, action) => {
+  // Add the city
+  var cities = state.cities.slice();
+  _.pull(cities, action.payload.city);
+
+  // Update suggestions
+  const suggestions = getSuggestions(cities);
+
+  // Fill out getJson data for selected cities
+  selectedCities = cities.map(city => {
+    // Get the geoJson feature of the city
+    return _.find(filteredCities, feature => {
       return city === TravelingSalesmanComponent.getCityName(feature);
     });
   }).filter(Boolean);
@@ -132,7 +153,7 @@ const reduceGetNewTravelingSalesmanRoutes = (state, action) => {
       newCityState
     ] = newCity.split(',');
 
-    let newCityCoordinates = Utility.findValue(usaCities, 'features', []).find(feature => {
+    let newCityCoordinates = filteredCities.find(feature => {
       return feature.properties.city === newCityName.trim() && feature.properties.state === newCityState.trim();
     }).geometry.coordinates;
 
@@ -145,6 +166,9 @@ const reduceGetNewTravelingSalesmanRoutes = (state, action) => {
       const routeId = Utility.getRouteId(currentCity, nextCity);
       const route = routes[routeId];
       const coordinates = Utility.findValue(route, 'geoJson.geometry.coordinates', []);
+      // @todo This can probably be simplified by using
+      // https://developer.mozilla.org/en-US/docs/Web/API/SVGGeometryElement/isPointInStroke
+      // instead of cityWithinRadius
       _.each(coordinates, pair => {
         if (cityWithinRadius(pair, newCityCoordinates, 10)) {
           alreadyCovered = true;
@@ -177,7 +201,7 @@ const reduceGetNewTravelingSalesmanRoutes = (state, action) => {
 const getSuggestions = cities => {
   // Re-collect suggestions to avoid duplicating city choices
   var suggestions = [];
-  usaCities.features.forEach(feature => {
+  filteredCities.forEach(feature => {
     const city = TravelingSalesmanComponent.getCityName(feature);
     if (cities.indexOf(city) === -1) {
       suggestions.push(city);
@@ -209,10 +233,14 @@ const osmToGeoJson = (newRoute) => {
   }
   // Populate line coordinates
   geoJson.geometry.coordinates = [];
+  var overallIndex = 0;
   steps.forEach(step => {
     const intersections = step.intersections || [];
     intersections.forEach(intersection => {
-      geoJson.geometry.coordinates.push(intersection.location);
+      if (overallIndex % coordinateSampleRate === 0) {
+        geoJson.geometry.coordinates.push(intersection.location);
+      }
+      overallIndex++;
     });
   });
   newRoute.geoJson = geoJson;

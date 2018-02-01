@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import {
-  scaleSequential as d3ScaleSequential,
-  interpolateViridis as d3InterpolateViridis
-} from 'd3';
+import * as d3 from 'd3';
 
 import GeoPath from './GeoPath';
 import InputWithSuggestions from './InputWithSuggestions';
-import TravelingSalesmanMarker from './TravelingSalesmanMarker';
+import TravelingSalesmanMarker, { encodePathId } from './TravelingSalesmanMarker';
 
 import Utility from '../classes/Utility';
 
+import * as config from '../config.json';
+
 import {
   addTravelingSalesmanCity,
+  removeTravelingSalesmanCity,
   getNewTravelingSalesmanRoutes
 } from '../actions';
 
@@ -22,21 +22,20 @@ import '../css/TravelingSalesman.css';
 import usaStatesBoundary from '../data/usa-states-boundary';
 
 // configure to show the USA lower 48
-const width = 1400;
-const height = 540;
+const { usaMap } = config;
+const width = usaMap.width;
+const height = usaMap.height;
 
-const geoPathPlacementSettings = {
-  scale: 1000,
-  rotate: [90, 0],
-  center: [-7, 38],
-  translate: [width/2, height/2]
-};
+var geoPathPlacementSettings = usaMap.geoPathPlacementSettings;
+geoPathPlacementSettings.translate = [width/2, height/2];
 
 class TravelingSalesmanComponent extends Component {
   constructor(props) {
     super(props);
 
     this.activeRoutes = [];
+
+    this.handleCityClick = this.handleCityClick.bind(this);
   }
 
   componentDidUpdate() {
@@ -53,13 +52,17 @@ class TravelingSalesmanComponent extends Component {
     }
 
     var newRoutes = {};
-    for (let i = 0; i < selectedCities.features.length; i++) {
-      for (let j = i; j < selectedCities.features.length; j++) {
-        let feature1 = selectedCities.features[i];
-        let feature2 = selectedCities.features[j];
+    for (let i = 0; i < selectedCities.length; i++) {
+      for (let j = i; j < selectedCities.length; j++) {
+        let feature1 = selectedCities[i];
+        let feature2 = selectedCities[j];
 
         this._addRouteObject(feature1, feature2, routes, newRoutes);
       }
+    }
+
+    if (!cities.length) {
+      return;
     }
 
     this.props.getNewTravelingSalesmanRoutes(newRoutes);
@@ -95,6 +98,11 @@ class TravelingSalesmanComponent extends Component {
     }
   }
 
+  handleCityClick(event, props, state) {
+    const cityName = TravelingSalesmanComponent.getCityName(props.geoJson);
+    this.props.removeTravelingSalesmanCity(cityName);
+  }
+
   renderSalesman(geoJson) {
     const { coordinates } = geoJson.geometry;
     const approximateMiddle = coordinates[(coordinates.length / 2).toFixed()];
@@ -123,13 +131,23 @@ class TravelingSalesmanComponent extends Component {
       if (!nextCity) {
         nextCity = this.props.shortestTourPath[0];
       }
+
       const routeId = Utility.getRouteId(city, nextCity);
-      return this.props.routes[routeId];
+      var activeRoute = this.props.routes[routeId];
+      if (!activeRoute) {
+        return;
+      }
+      activeRoute = Object.assign({}, activeRoute);
+      activeRoute.reversed = false;
+      if (routeId.indexOf(city) !== 0) {
+        activeRoute.reversed = true;
+      }
+      return activeRoute;
     }).filter(Boolean);
     // Use a sequential color gradient to help represent direction of travel
-    const scaleColor = d3ScaleSequential()
+    const scaleColor = d3.scaleSequential()
       .domain([0, this.activeRoutes.length - 1])
-      .interpolator(d3InterpolateViridis);
+      .interpolator(d3.interpolateViridis);
 
     return _.map(this.activeRoutes, (route, index) => {
       return (
@@ -140,9 +158,32 @@ class TravelingSalesmanComponent extends Component {
           stroke={scaleColor(index)}
           strokeWidth="2"
           key={`tour-index-${index}`}
+          pathId={encodePathId(`${route.from.city};${route.to.city}`, route.reversed)}
         />
       );
     });
+  }
+
+  renderCities() {
+    return this.props.selectedCities.map(city => {
+      return (
+        <GeoPath
+          geoJson={city}
+          {...geoPathPlacementSettings}
+          fill="orange"
+          pointRadius={usaMap.cityRadius}
+          handleClick={this.handleCityClick}
+          key={`${city.properties.city}, ${city.properties.state}`}
+        />
+      );
+    });
+  }
+
+  renderCityClickMessage() {
+    if (!this.props.selectedCities.length) {
+      return <div />;
+    }
+    return <div id="city-click-message">Click on a city to remove it.</div>;
   }
 
   render() {
@@ -154,10 +195,11 @@ class TravelingSalesmanComponent extends Component {
           placeholder="City"
           submitValue="Add"
           suggestions={this.props.suggestions}
-          threshold={1}
+          threshold={config.inputSuggestionThreshold}
           handleSubmit={this.props.addTravelingSalesmanCity}
           label="Add one city at a time."
         />
+        {this.renderCityClickMessage()}
         <div id="traveling-salesman-map-wrapper">
           <svg width={width} height={height}>
             <GeoPath
@@ -167,17 +209,14 @@ class TravelingSalesmanComponent extends Component {
               stroke="#999"
             />
             {this.renderRoutes()}
-            <GeoPath
-              geoJson={this.props.selectedCities}
-              {...geoPathPlacementSettings}
-              fill="orange"
-            />
+            {this.renderCities()}
             <TravelingSalesmanMarker
               {...geoPathPlacementSettings}
               routes={this.props.routes}
               tourPath={this.props.shortestTourPath}
-              interval={350}
+              durationFactor={config.salesmanSpeedFactor}
               fill="HotPink"
+              pathId="traveling-salesman-marker"
             />
           </svg>
         </div>
@@ -213,7 +252,6 @@ function mapStateToProps(reducers) {
 
 export default connect(mapStateToProps, {
   addTravelingSalesmanCity,
+  removeTravelingSalesmanCity,
   getNewTravelingSalesmanRoutes
 })(TravelingSalesmanComponent);
-
-// @todo implement removal of a city
