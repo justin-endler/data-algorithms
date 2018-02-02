@@ -1,5 +1,9 @@
 import BinaryTreeNode from './BinaryTreeNode';
 
+const searchAndLinkToNode = Symbol('searchAndLinkToNode');
+const removeNode = Symbol('removeNode');
+const collectInPreOrder = Symbol('collectInPreOrder');
+
 export default class BinarySearchTree {
   constructor(root = null) {
     if (root) {
@@ -18,7 +22,7 @@ export default class BinarySearchTree {
     if (!this.root) {
       this.root = new BinaryTreeNode(data);
     } else {
-      return this._searchAndLinkToNode(data, this.root);
+      return this[searchAndLinkToNode](data, this.root);
     }
   }
 
@@ -27,7 +31,7 @@ export default class BinarySearchTree {
     if (isNaN(data)) {
       return;
     }
-    this.root = this._removeNode(this.root, data);
+    this.root = this[removeNode](this.root, data);
   }
 
   getLevelOrderTraversal(tree = this) {
@@ -52,15 +56,15 @@ export default class BinarySearchTree {
     return result;
   }
 
-  _searchAndLinkToNode(data, node) {
+  [searchAndLinkToNode](data, node) {
     if (data < node.data) {
       if (node.left) {
-        return this._searchAndLinkToNode(data, node.left);
+        return this[searchAndLinkToNode](data, node.left);
       }
       node.setLeft(new BinaryTreeNode(data));
     } else if (data > node.data) {
       if (node.right) {
-        return this._searchAndLinkToNode(data, node.right);
+        return this[searchAndLinkToNode](data, node.right);
       }
       node.setRight(new BinaryTreeNode(data));
     } else {
@@ -68,7 +72,7 @@ export default class BinarySearchTree {
     }
   }
 
-  _removeNode(node, data) {
+  [removeNode](node, data) {
     if (!node) {
       return;
     }
@@ -91,14 +95,14 @@ export default class BinarySearchTree {
         tempNode = tempNode.left;
       }
       node.data = tempNode.data;
-      node.right = this._removeNode(node.right, tempNode.data);
+      node.right = this[removeNode](node.right, tempNode.data);
       return node;
     }
     if (data < node.data) {
-      node.left = this._removeNode(node.left, data);
+      node.left = this[removeNode](node.left, data);
       return node;
     }
-    node.right = this._removeNode(node.right, data);
+    node.right = this[removeNode](node.right, data);
     return node;
   }
 
@@ -123,21 +127,21 @@ export default class BinarySearchTree {
     if (!this.root) {
       return result;
     }
-    result.push(this._collectInPreOrder(this.root));
+    result.push(this[collectInPreOrder](this.root));
     return result;
   }
 
-  _collectInPreOrder(node) {
+  [collectInPreOrder](node) {
     var children = [];
     if (node.left) {
-      children[0] = this._collectInPreOrder(node.left);
+      children[0] = this[collectInPreOrder](node.left);
     } else {
       children[0] = {
         name: 'leaf'
       };
     }
     if (node.right) {
-      children[1] = this._collectInPreOrder(node.right);
+      children[1] = this[collectInPreOrder](node.right);
     } else {
       children[1] = {
         name: 'leaf'
