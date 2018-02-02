@@ -19,6 +19,8 @@ const geoJson = {
   }
 };
 
+const translateAlong = Symbol('translateAlong');
+
 class TravelingSalesmanMarker extends Component {
   constructor(props) {
     super(props);
@@ -105,22 +107,22 @@ class TravelingSalesmanMarker extends Component {
         markerElement
           .transition()
           .duration(pathLength * this.props.durationFactor)
-          .attrTween('transform', this._translateAlong(pathElement, pathLength, fromPoint, path))
+          .attrTween('transform', this[translateAlong](pathElement, pathLength, fromPoint, path))
           .on('end', callback);
       }
     );
   }
 
-  _translateAlong = (pathElement, pathLength, fromPoint, path) => {
+  [translateAlong] = (pathElement, pathLength, fromPoint, path) => {
     var tTerm = 0;
     if (path.reversed) {
       tTerm = -1;
     }
 
     return () => {
-      return t => {
-        t = Math.abs(t + tTerm);
-        const point = pathElement.getPointAtLength(t * pathLength);
+      return time => {
+        time = Math.abs(time + tTerm);
+        const point = pathElement.getPointAtLength(time * pathLength);
         return `translate(${point.x - fromPoint.x}, ${point.y - fromPoint.y})`;
       };
     };
@@ -155,12 +157,13 @@ class TravelingSalesmanMarker extends Component {
 // Allows usage of the "fromCity; toCity" id format but encodes for use in DOM element ids
 const encodePathId = (str = '', reversed) => {
   str = str
-    .replace(/\s/g, '')
+    .replace(/[\s\.]/g, '')
     .replace(/,/g, '-')
     .replace(';','_');
   if (reversed) {
     str += '_reversed';
   }
+
   return str;
 };
 

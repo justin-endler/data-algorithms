@@ -29,6 +29,8 @@ const height = usaMap.height;
 var geoPathPlacementSettings = usaMap.geoPathPlacementSettings;
 geoPathPlacementSettings.translate = [width/2, height/2];
 
+const addRouteObject = Symbol('addRouteObject');
+
 class TravelingSalesmanComponent extends Component {
   constructor(props) {
     super(props);
@@ -57,7 +59,7 @@ class TravelingSalesmanComponent extends Component {
         let feature1 = selectedCities[i];
         let feature2 = selectedCities[j];
 
-        this._addRouteObject(feature1, feature2, routes, newRoutes);
+        this[addRouteObject](feature1, feature2, routes, newRoutes);
       }
     }
 
@@ -68,7 +70,7 @@ class TravelingSalesmanComponent extends Component {
     this.props.getNewTravelingSalesmanRoutes(newRoutes);
   }
 
-  _addRouteObject(feature1, feature2, routes, newRoutes) {
+  [addRouteObject](feature1, feature2, routes, newRoutes) {
     // Use consistent order for comparison
     const [fromFeature, toFeature] = _.sortBy([feature1, feature2], feature => {
       return TravelingSalesmanComponent.getCityName(feature);

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 
+const resolvePathProps = Symbol('resolvePathProps');
+
 class GeoPath extends Component {
   constructor(props) {
     super(props);
@@ -37,13 +39,13 @@ class GeoPath extends Component {
     this.state = {
       geoPath,
       path,
-      pathProps: this._resolvePathProps(props)
+      pathProps: this[resolvePathProps](props)
     };
 
     this.handleClick = this.handleClick.bind(this);
   }
 
-  _resolvePathProps(props) {
+  [resolvePathProps](props) {
     return {
       fill: props.fill || '#000',
       stroke: props.stroke || props.fill,
@@ -69,7 +71,7 @@ class GeoPath extends Component {
     this.setState(Object.assign({}, {
       geoPath,
       path,
-      pathProps: this._resolvePathProps(nextProps)
+      pathProps: this[resolvePathProps](nextProps)
     }));
   }
 
