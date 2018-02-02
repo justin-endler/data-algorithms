@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Tree from 'react-d3-tree';
 import * as d3 from 'd3';
 
 import InputWithSuggestions from './InputWithSuggestions';
+import Tree from 'react-d3-tree';
+
+import '../css/BinarySearchTreeComponent.css';
 
 import {
   initBinarySearchTree,
@@ -11,8 +13,6 @@ import {
   replaceBinarySearchTree,
   insertBinarySearchTreeNode
 } from '../actions';
-
-import '../css/BinarySearchTreeComponent.css';
 
 import * as config from '../config';
 
@@ -23,6 +23,8 @@ const {
 } = config.binaryTree;
 
 const nodeWidthBuffer = nodeWidth * 3;
+
+const resizeTree = Symbol('resizeTree');
 
 class BinarySearchTreeComponent extends Component {
   constructor(props) {
@@ -60,43 +62,51 @@ class BinarySearchTreeComponent extends Component {
     this.props.removeBinarySearchTreeNode(data, tree);
   }
 
+  [resizeTree]() {
+    // Maintain appropriate zoom level
+    const treeG = d3.select('.rd3t-g');
+    const containerRect = this.treeContainer ? this.treeContainer.getBoundingClientRect() : null;
+    var widthFactor = 1;
+    if (!treeG.empty() && containerRect) {
+      let treeGNode = treeG.node();
+      let treeGRect = treeGNode.getBoundingClientRect();
+
+      let zoomG = d3.zoom().on('zoom', () => {
+        treeG.attr('transform', d3.event.transform);
+      });
+
+      let adjustedWidthFactor = containerRect.width / (treeGRect.width + nodeWidthBuffer);
+      if (adjustedWidthFactor < 1) {
+        widthFactor = adjustedWidthFactor;
+        zoomG.transform(treeG, `scale(${widthFactor})`);
+        treeGRect = treeGNode.getBoundingClientRect();
+      }
+
+      // Offset the graph to keep it visible
+      if (treeGRect.left < 0) {
+        if (widthFactor < 1) {
+          zoomG.transform(treeG, `translate(${Math.abs(treeGRect.left) + nodeWidth}, 20) scale(${widthFactor})`);
+        } else {
+          zoomG.transform(treeG, `translate(${(containerRect.width / 2) + Math.abs(treeGRect.left) + nodeWidth}, 20) scale(${widthFactor})`);
+        }
+      } else if (treeGRect.right > containerRect.width) {
+        zoomG.transform(treeG, `translate(${(containerRect.width / 2) - (treeGRect.right - containerRect.width) - nodeWidth}, 20) scale(${widthFactor})`);
+      }
+    }
+  }
+
   componentDidUpdate(previousProps) {
     if (this.props.tree.compare(previousProps.tree)) {
-      // Maintain appropriate zoom level
-      const treeG = d3.select('.rd3t-g');
-      const containerRect = this.treeContainer ? this.treeContainer.getBoundingClientRect() : null;
-      var widthFactor = 1;
-      if (!treeG.empty() && containerRect) {
-        let treeGNode = treeG.node();
-        let treeGRect = treeGNode.getBoundingClientRect();
-
-        let zoomG = d3.zoom().on('zoom', () => {
-          treeG.attr('transform', d3.event.transform);
-        });
-
-        let adjustedWidthFactor = containerRect.width / (treeGRect.width + nodeWidthBuffer);
-        if (adjustedWidthFactor < 1) {
-          widthFactor = adjustedWidthFactor;
-          zoomG.transform(treeG, `scale(${widthFactor})`);
-          treeGRect = treeGNode.getBoundingClientRect();
-        }
-
-        // Offset the graph to keep it visible
-        if (treeGRect.left < 0) {
-          if (widthFactor < 1) {
-            zoomG.transform(treeG, `translate(${Math.abs(treeGRect.left) + nodeWidth}, 20) scale(${widthFactor})`);
-          } else {
-            zoomG.transform(treeG, `translate(${(containerRect.width / 2) + Math.abs(treeGRect.left) + nodeWidth}, 20) scale(${widthFactor})`);
-          }
-        } else if (treeGRect.right > containerRect.width) {
-          zoomG.transform(treeG, `translate(${(containerRect.width / 2) - (treeGRect.right - containerRect.width) - nodeWidth}, 20) scale(${widthFactor})`);
-        }
-      }
+      this[resizeTree]();
       return;
     }
     // Update the tree if it is different than the last version.
     // This allows the translate function to recalculate for centering the tree.
     this.props.replaceBinarySearchTree(this.props.tree, this.treeContainer);
+  }
+
+  componentDidMount() {
+    this[resizeTree]();
   }
 
   pathFunc(linkData, orientation) {
@@ -159,7 +169,12 @@ class BinarySearchTreeComponent extends Component {
 }
 
 function mapStateToProps(reducers) {
-  const { tree, d3Representation, translate } = reducers['/binary-search-tree'];
+  const {
+    tree,
+    d3Representation,
+    translate
+  } = reducers['/binary-search-tree'];
+
   return {
     tree,
     d3Representation,
