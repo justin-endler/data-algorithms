@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import Nav from './Nav';
 import { Switch, Route } from 'react-router-dom';
-import BinarySearchTreeComponent from './BinarySearchTreeComponent';
+
+import Nav from './Nav';
 import About from './About';
 import TravelingSalesmanComponent from './TravelingSalesmanComponent';
+import BinarySearchTreeComponent from './BinarySearchTreeComponent';
 
 export default class App extends Component {
   render() {

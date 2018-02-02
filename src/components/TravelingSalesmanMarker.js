@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import * as d3 from 'd3';
 import async from 'async';
+import Utility from '../classes/Utility';
 
 import GeoPath from './GeoPath';
 
 import { updateTravelingSalesmanMarkerPaths } from '../actions';
-
-import Utility from '../classes/Utility';
 
 const geoJson = {
   type: 'Feature',
@@ -53,7 +51,7 @@ class TravelingSalesmanMarker extends Component {
       }
       // There's only one city on the map, return
       if (fromCity === toCity) {
-        return;
+        return null;
       }
       // Determine direction of route and adjust
       var routeId = `${fromCity};${toCity}`;
@@ -157,7 +155,7 @@ class TravelingSalesmanMarker extends Component {
 // Allows usage of the "fromCity; toCity" id format but encodes for use in DOM element ids
 const encodePathId = (str = '', reversed) => {
   str = str
-    .replace(/[\s\.]/g, '')
+    .replace(/[\s.]/g, '')
     .replace(/,/g, '-')
     .replace(';','_');
   if (reversed) {

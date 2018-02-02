@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as d3 from 'd3';
+import Utility from '../classes/Utility';
 
 import GeoPath from './GeoPath';
 import InputWithSuggestions from './InputWithSuggestions';
 import TravelingSalesmanMarker, { encodePathId } from './TravelingSalesmanMarker';
 
-import Utility from '../classes/Utility';
-
-import * as config from '../config.json';
+import '../css/TravelingSalesman.css';
 
 import {
   addTravelingSalesmanCity,
@@ -17,9 +16,9 @@ import {
   getNewTravelingSalesmanRoutes
 } from '../actions';
 
-import '../css/TravelingSalesman.css';
-
 import usaStatesBoundary from '../data/usa-states-boundary';
+
+import * as config from '../config.json';
 
 // configure to show the USA lower 48
 const { usaMap } = config;
@@ -137,7 +136,7 @@ class TravelingSalesmanComponent extends Component {
       const routeId = Utility.getRouteId(city, nextCity);
       var activeRoute = this.props.routes[routeId];
       if (!activeRoute) {
-        return;
+        return null;
       }
       activeRoute = Object.assign({}, activeRoute);
       activeRoute.reversed = false;
@@ -197,9 +196,10 @@ class TravelingSalesmanComponent extends Component {
           placeholder="City"
           submitValue="Add"
           suggestions={this.props.suggestions}
-          threshold={config.inputSuggestionThreshold}
+          threshold={config.inputSuggestionsThreshold}
           handleSubmit={this.props.addTravelingSalesmanCity}
           label="Add one city at a time."
+          autoFocus={true}
         />
         {this.renderCityClickMessage()}
         <div id="traveling-salesman-map-wrapper">

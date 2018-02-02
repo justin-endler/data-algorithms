@@ -27,6 +27,7 @@ class InputWithSuggestions extends Component {
         if (suggestion.toLowerCase().indexOf(value.trim().toLowerCase()) > -1) {
           return suggestion;
         }
+        return null;
       }).filter(Boolean);
     }
     // Sort matching suggestions by proximity of match to the start of the value

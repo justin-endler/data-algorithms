@@ -13,8 +13,7 @@ class GeoPath extends Component {
       center,
       translate,
       geoJson,
-      pointRadius,
-      handleClick
+      pointRadius
     } = props;
 
     this.albersProjection = d3.geoAlbers()
