@@ -20,6 +20,9 @@ const About = () => {
           <strong>Binary Search Tree</strong> - partial implementation of the typical BST API
         </li>
       </ul>
+      <p>
+        by <strong>Justin Endler</strong> - <a href="https://github.com/justin-endler/data-algorithms">https://github.com/justin-endler/data-algorithms</a>
+      </p>
       <small>
         US map data is sourced from <a href="http://eric.clst.org/tech/usgeojson/" title="US map">http://eric.clst.org/tech/usgeojson/</a> which is a geoJson port of Shapefiles from <a href="https://www.census.gov/geo/maps-data/data/tiger-cart-boundary.html" title="Shapefiles">https://www.census.gov/geo/maps-data/data/tiger-cart-boundary.html</a>. US cities data is sourced from <a href="https://gist.github.com/Vudude/cee778c78694fe4183aec99693e104b1" title="US cities">https://gist.github.com/Vudude/cee778c78694fe4183aec99693e104b1</a>. Roadway data is sourced from an API provided by © OpenStreetMap contributors. This data is available under the Open Database Licence at <a href="https://opendatacommons.org/licenses/odbl/" title="Open Database Licence">https://opendatacommons.org/licenses/odbl/</a>. This project customizes some code from <a href="https://codepen.io/beaucarnes/pen/ryKvEQ?editors=0011" title="Beau Carnes">https://codepen.io/beaucarnes/pen/ryKvEQ?editors=0011</a> and it makes use of <a href="https://github.com/facebookincubator/create-react-app" title="Create React App">https://github.com/facebookincubator/create-react-app</a>. Deployed at <a href="https://data-algorithms.herokuapp.com/" title="Data/Algorithms">https://data-algorithms.herokuapp.com/</a>.
       </small>

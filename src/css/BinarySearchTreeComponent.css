@@ -4,11 +4,11 @@
 }
 
 #node-value-submit {
-  margin: 0 0 3px 12px;
+  margin: 0 0 0.25rem 1rem;
 }
 
 .rd3t-svg {
-  padding-top: 12px;
+  padding-top: 1rem;
 }
 
 /* hide all (empty) leaf nodes */

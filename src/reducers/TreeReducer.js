@@ -5,6 +5,8 @@ import {
   REPLACE_BINARY_SEARCH_TREE
 } from '../actions';
 
+import { binaryTree as binaryTreeConfig } from '../config.json';
+
 const actionTypes = [
   INIT_BINARY_SEARCH_TREE,
   INSERT_BINARY_SEARCH_TREE_NODE,
@@ -39,7 +41,7 @@ const getBinaryTreeTranslate = (container) => {
   var dimensions = container.getBoundingClientRect();
   return {
     x: dimensions.width / 2,
-    y: 20
+    y: binaryTreeConfig.paddingTop
   };
 };
 
