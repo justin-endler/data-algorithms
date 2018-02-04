@@ -20,6 +20,7 @@
       "y": -25
     },
     "transitionDuration": 300,
-    "nodeWidth": 20
+    "nodeWidth": 20,
+    "paddingTop": 35
   }
 }

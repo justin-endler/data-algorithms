@@ -19,7 +19,8 @@ import * as config from '../config';
 const {
   nodeTextLayout,
   transitionDuration,
-  nodeWidth
+  nodeWidth,
+  paddingTop
 } = config.binaryTree;
 
 const nodeWidthBuffer = nodeWidth * 3;
@@ -85,12 +86,12 @@ class BinarySearchTreeComponent extends Component {
       // Offset the graph to keep it visible
       if (treeGRect.left < 0) {
         if (widthFactor < 1) {
-          zoomG.transform(treeG, `translate(${Math.abs(treeGRect.left) + nodeWidth}, 20) scale(${widthFactor})`);
+          zoomG.transform(treeG, `translate(${Math.abs(treeGRect.left) + nodeWidth}, ${paddingTop}) scale(${widthFactor})`);
         } else {
-          zoomG.transform(treeG, `translate(${(containerRect.width / 2) + Math.abs(treeGRect.left) + nodeWidth}, 20) scale(${widthFactor})`);
+          zoomG.transform(treeG, `translate(${(containerRect.width / 2) + Math.abs(treeGRect.left) + nodeWidth}, ${paddingTop}) scale(${widthFactor})`);
         }
       } else if (treeGRect.right > containerRect.width) {
-        zoomG.transform(treeG, `translate(${(containerRect.width / 2) - (treeGRect.right - containerRect.width) - nodeWidth}, 20) scale(${widthFactor})`);
+        zoomG.transform(treeG, `translate(${(containerRect.width / 2) - (treeGRect.right - containerRect.width) - nodeWidth}, ${paddingTop}) scale(${widthFactor})`);
       }
     }
   }
