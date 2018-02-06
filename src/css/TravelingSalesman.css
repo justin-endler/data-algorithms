@@ -1,12 +1,17 @@
 #traveling-salesman-form {
-  margin-left: 45px;
+  margin-left: 3rem;
   position: relative;
   z-index: 10;
 }
 
+[for=traveling-salesman-input] {
+  font-weight: bold;
+}
+
 #city-click-message {
-  margin-left: 45px;
+  margin-left: 3rem;
   position: absolute;
+  width: 19rem;
 }
 
 #traveling-salesman-form .list-group {
@@ -14,10 +19,10 @@
 }
 
 .btn-primary {
-  margin-left: 6px;
+  margin: 0 0 .1rem .5rem;
 }
 
 #traveling-salesman-map-wrapper {
   position: relative;
-  bottom: 47px;
+  bottom: 3rem;
 }

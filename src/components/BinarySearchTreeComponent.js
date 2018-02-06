@@ -147,7 +147,7 @@ class BinarySearchTreeComponent extends Component {
         <div>
           <div className="container">
             {this.renderInput()}
-            <div>Click on a node to remove it.</div>
+            <div>To remove a node, click on it.</div>
           </div>
           <div id="binary-search-tree-container" ref={tc => {this.treeContainer = tc;}}>
             <Tree
