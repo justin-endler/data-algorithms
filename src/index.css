@@ -10,3 +10,7 @@ h1 {
 h2 {
   font-size: 1.5rem;
 }
+
+[type=text] {
+  margin-top: .5rem;
+}
