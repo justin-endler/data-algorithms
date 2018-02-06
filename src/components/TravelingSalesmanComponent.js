@@ -184,7 +184,11 @@ class TravelingSalesmanComponent extends Component {
     if (!this.props.selectedCities.length) {
       return <div />;
     }
-    return <div id="city-click-message">Click on a city to remove it.</div>;
+    return (
+      <div id="city-click-message">
+        <strong>To remove a city, click on it.</strong> The displayed route is the shortest path found by the algorithm.
+      </div>
+    );
   }
 
   render() {
@@ -198,7 +202,7 @@ class TravelingSalesmanComponent extends Component {
           suggestions={this.props.suggestions}
           threshold={config.inputSuggestionsThreshold}
           handleSubmit={this.props.addTravelingSalesmanCity}
-          label="Add one city at a time."
+          label="Add cities one at a time."
           autoFocus={true}
         />
         {this.renderCityClickMessage()}

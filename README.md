@@ -1,6 +1,6 @@
 # Data Structures/Algorithms
 
-## Simple interactive demo of some data structures using React/Redux.
+## Simple interactive demos using React / Redux / D3.js
 * Traveling Salesman
   * Custom solution using the nearest neighbor algorithm once per city as the origin
   * This improves the accuracy over a single run of NN
