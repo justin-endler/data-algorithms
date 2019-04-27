@@ -12,7 +12,6 @@ const About = () => {
           <ul className="pt-1">
             <li className="mb-2">Custom solution using the nearest neighbor algorithm once per city as the origin</li>
             <li className="mb-2">This improves the accuracy over a single run of NN</li>
-            <li className="mb-2">Complexity is O(n^2), memoized down to around O(n * (n - 1))</li>
             <li className="mb-2">This implementation follows real roadways, so the path between two cities can pass through other cities. If a city is added that is already covered by an existing path, the NN algorithm is skipped and the new city is simply added to the existing tour.</li>
           </ul>
         </li>
