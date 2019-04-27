@@ -4,7 +4,6 @@
 * Traveling Salesman
   * Custom solution using the nearest neighbor algorithm once per city as the origin
   * This improves the accuracy over a single run of NN
-  * Complexity is O(n^2), memoized down to around O(n * (n - 1))
   * This implementation follows real roadways, so the path between two cities can pass through other cities. If a city is added that is already covered by an existing path, the NN algorithm is skipped and the new city is simply added to the existing tour.
 * Binary Search Tree
   * Partial implementation of the typical BST API
