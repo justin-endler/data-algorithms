@@ -1,7 +1,7 @@
 import async from 'async';
 import axios from 'axios';
 
-import BinarySearchTree from '../classes/BinarySearchTree';
+import BinarySearchTree from 'classes/BinarySearchTree';
 
 export const INIT_BINARY_SEARCH_TREE = 'INIT_BINARY_SEARCH_TREE';
 export const INSERT_BINARY_SEARCH_TREE_NODE = 'INSERT_BINARY_SEARCH_TREE_NODE';

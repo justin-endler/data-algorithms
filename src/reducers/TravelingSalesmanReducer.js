@@ -1,19 +1,19 @@
 import _ from 'lodash';
-import Utility from '../classes/Utility';
+import Utility from 'classes/Utility';
 
-import TravelingSalesmanComponent from '../components/TravelingSalesmanComponent';
-import TravelingSalesman from '../classes/TravelingSalesman';
+import TravelingSalesmanComponent from 'components/TravelingSalesmanComponent';
+import TravelingSalesman from 'classes/TravelingSalesman';
 
 import {
   ADD_TRAVELING_SALESMAN_CITY,
   REMOVE_TRAVELING_SALESMAN_CITY,
   GET_NEW_TRAVELING_SALESMAN_ROUTES,
   UPDATE_TRAVELING_SALESMAN_MARKER_PATHS
-} from '../actions';
+} from 'actions';
 
-import usaCities from '../data/usa-cities';
+import usaCities from 'data/usa-cities';
 
-import * as config from '../config';
+import * as config from 'config.json';
 
 const {
   coordinateSampleRate,

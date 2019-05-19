@@ -1,4 +1,4 @@
-import BinaryTreeNode from './BinaryTreeNode';
+import BinaryTreeNode from 'classes/BinaryTreeNode';
 
 const searchAndLinkToNode = Symbol('searchAndLinkToNode');
 const removeNode = Symbol('removeNode');

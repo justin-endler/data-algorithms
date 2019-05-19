@@ -2,19 +2,19 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as d3 from 'd3';
 
-import InputWithSuggestions from './InputWithSuggestions';
+import InputWithSuggestions from 'components/InputWithSuggestions';
 import Tree from 'react-d3-tree';
 
-import '../css/BinarySearchTreeComponent.css';
+import 'css/BinarySearchTreeComponent.css';
 
 import {
   initBinarySearchTree,
   removeBinarySearchTreeNode,
   replaceBinarySearchTree,
   insertBinarySearchTreeNode
-} from '../actions';
+} from 'actions';
 
-import * as config from '../config';
+import * as config from 'config.json';
 
 const {
   nodeTextLayout,

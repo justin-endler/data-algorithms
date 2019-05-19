@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as d3 from 'd3';
 import async from 'async';
-import Utility from '../classes/Utility';
+import Utility from 'classes/Utility';
 
-import GeoPath from './GeoPath';
+import GeoPath from 'components/GeoPath';
 
-import { updateTravelingSalesmanMarkerPaths } from '../actions';
+import { updateTravelingSalesmanMarkerPaths } from 'actions';
 
 const geoJson = {
   type: 'Feature',

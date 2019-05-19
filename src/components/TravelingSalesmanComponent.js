@@ -2,23 +2,23 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import * as d3 from 'd3';
-import Utility from '../classes/Utility';
+import Utility from 'classes/Utility';
 
-import GeoPath from './GeoPath';
-import InputWithSuggestions from './InputWithSuggestions';
-import TravelingSalesmanMarker, { encodePathId } from './TravelingSalesmanMarker';
+import GeoPath from 'components/GeoPath';
+import InputWithSuggestions from 'components/InputWithSuggestions';
+import TravelingSalesmanMarker, { encodePathId } from 'components/TravelingSalesmanMarker';
 
-import '../css/TravelingSalesman.css';
+import 'css/TravelingSalesman.css';
 
 import {
   addTravelingSalesmanCity,
   removeTravelingSalesmanCity,
   getNewTravelingSalesmanRoutes
-} from '../actions';
+} from 'actions';
 
-import usaStatesBoundary from '../data/usa-states-boundary';
+import usaStatesBoundary from 'data/usa-states-boundary';
 
-import * as config from '../config.json';
+import * as config from 'config.json';
 
 // configure to show the USA lower 48
 const { usaMap } = config;

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import Utility from './Utility';
+import Utility from 'classes/Utility';
 
 export default class TravelingSalesman {
   constructor(cities, routes, usaCities) {

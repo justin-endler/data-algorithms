@@ -3,9 +3,9 @@ import {
   INSERT_BINARY_SEARCH_TREE_NODE,
   REMOVE_BINARY_SEARCH_TREE_NODE,
   REPLACE_BINARY_SEARCH_TREE
-} from '../actions';
+} from 'actions';
 
-import { binaryTree as binaryTreeConfig } from '../config.json';
+import { binaryTree as binaryTreeConfig } from 'config.json';
 
 const actionTypes = [
   INIT_BINARY_SEARCH_TREE,

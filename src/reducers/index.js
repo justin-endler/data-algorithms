@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
 
-import TreeReducer from './TreeReducer';
+import TreeReducer from 'reducers/TreeReducer';
 import {
   TravelingSalesmanReducer,
   TravelingSalesmanMarkerReducer
-} from './TravelingSalesmanReducer';
+} from 'reducers/TravelingSalesmanReducer';
 
 
-var reducers = {};
+const reducers = {};
 reducers['/binary-search-tree'] = TreeReducer;
 reducers['/traveling-salesman'] = TravelingSalesmanReducer;
 reducers['/traveling-salesman/marker'] = TravelingSalesmanMarkerReducer;
